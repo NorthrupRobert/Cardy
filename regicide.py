@@ -1,63 +1,41 @@
-# Setup python
-import pygame, sys
+import cardy
 
-# Import Regicide Modules
-import card
+# PLAYER CLASS
+class player:
+    def __init__(self, max_hand_size: int, new_deck = cardy.deck()):
+        assert isinstance(max_hand_size, int), "hand size must be of type int"
+        assert isinstance(new_deck, cardy.deck), "an argument of type cardy.deck must be passed to the player constructor"
+        assert (max_hand_size + 1) > new_deck.getnumcards(), "hand size cannot compensate for the number of cards when constructing player"
 
-# Setup pygame/window
-mainClock = pygame.time.Clock()
-from pygame.locals import *
-pygame.init()
-pygame.display.set_caption("Regicide")
-WIDTH, HEIGTH = 500, 724
-WHITE, BLACK, RED, GREEN, BLUE = (255, 255, 255), (0, 0, 0), (255, 0, 0), (0, 255, 0), (0, 0, 255)
-FPS = 60
-window = pygame.display.set_mode((WIDTH, HEIGTH), 0,  32) # (width, height), depth flag (default = 0), color depth
-font = pygame.font.SysFont("calibri", 40) # (font, size)
+        self.deck = new_deck
+        self.updatehealth()
 
+    def updatehealth(self):
+        sum = 0
+        for i in range(len(self.deck.set)):
+            if not (self.deck.set[i].value > 10):
+                sum += self.deck.set[i].value
+            elif self.deck.set[i].value == 11:
+                sum += 10
+            elif self.deck.set[i].value == 12:
+                sum += 15
+            elif self.deck.set[i].value == 13:
+                sum += 20
+            else:
+                raise Exception("invalid card: regicide/player/updatehealth")
+        self.health = sum
+        return sum
 
-def draw_text(text, font, color, surface, x, y):
-    textobj = font.render(text, 100, color) # text, antialias, color
-    textrect = textobj.get_rect()
-    textrect.topleft = (x, y)
-    surface.blit(textobj, textrect)
+    def add(self, new_card):
+        self.deck.addtop(new_card)
+        return True
 
-def main_menu():
-    in_menu = True
-    image = []
-    for i in range(1, 11):
-        current_name = ("c%d.png" % i)
-        image.append(pygame.image.load("C:\\Users\\RobbN\Documents\\Programs\\_Python\\Regicide\\graphics\\" + current_name))
-        image[i - 1] = pygame.transform.scale(image[i - 1], (WIDTH, HEIGTH))
+    def remove(self, remove_card):
+        return self.deck.drawindex(self.deck.findcardindex)
+        
 
-    count = 0
-    
-    while in_menu:
-        count += 1
-        if (count // 60) > 9:
-            count = 0
-        card_set = count // 60
-        window.fill(BLACK)
-        window.blit(image[card_set], (0, 0))
-        draw_text('main menu', font, WHITE, window, 0, 0)
+class enemy:
+    def __init__(self, new_deck):
+        assert isinstance(new_deck, cardy.deck), "an argument of type cardy.deck must be passed to the player constructor"
 
-
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
-
-        pygame.display.update()
-        mainClock.tick(FPS)
-
-def main():
-    # firstCard = card.card(1, 2)
-
-    main_menu()
-
-if __name__ == "__main__":
-    main()
+        self.deck = new_deck
