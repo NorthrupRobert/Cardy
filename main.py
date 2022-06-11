@@ -1,74 +1,51 @@
 # SETUP PYTHON
 import pygame, sys
+from pygame import mixer
 
 # REGICIDE MODULES
 import cardy as cy
 import regicide
+import graphics as g
 
-# SETUP PYGAME/WINDOW
-mainClock = pygame.time.Clock()
-from pygame.locals import *
-pygame.init()
-pygame.display.set_caption("Regicide")
-pygame.display.set_icon(pygame.image.load("C:\\Users\\RobbN\Documents\\Programs\\_Python\\Regicide\\graphics\\h1.png")) #FIX
-WIDTH, HEIGHT = 1280, 720
-WHITE, BLACK, RED, GREEN, BLUE, DARK_GREEN = (255, 255, 255), (0, 0, 0), (255, 0, 0), (0, 255, 0), (0, 0, 255), (55, 77, 55)
-FPS = 60
 PIXEL_SCALE = 3
-CARD_PIXEL_HEIGHT, CARD_PIXEL_WIDTH, CARD_SHADOW_PIXEL_HEIGHT, CARD_SHADOW_PIXEL_WIDTH =  (42 * PIXEL_SCALE), (29 * PIXEL_SCALE), (40 * PIXEL_SCALE), (27 * PIXEL_SCALE)
-window = pygame.display.set_mode((WIDTH, HEIGHT), 0,  32) # (width, height), depth flag (default = 0), color depth
-font = pygame.font.Font("C:\\Users\\RobbN\Documents\\Programs\\_Python\\Regicide\\graphics\\PressStart2P-vaV7.ttf", 20) # (font, size)
-
-
-def draw_text(text, font, color, surface, x, y):
-    textobj = font.render(text, 300, color) # text, antialias, color
-    textrect = textobj.get_rect()
-    textrect.topleft = (x, y)
-    surface.blit(textobj, textrect)
 
 def main():
-    my_deck = cy.deck([cy.card(1, 13), cy.card(3, 4)])
-
-    player = regicide.player(8, my_deck)
-    print(player.health)
-    print(player.updatehealth())
+    # mixer.music.load('C:\\Users\\RobbN\\Documents\Programs\\_Python\\Regicide\\audio\\opening.mp3')
+    # mixer.music.play()
 
     reg()
 
     print('Success!!')
 
 def reg():
+    # Set enemy deck
+    enemy = regicide.enemy(cy.deck((cy.card('h', 11), cy.card('h', 12), cy.card('h', 13), cy.card('d', 11), cy.card('d', 12), cy.card('d', 13), cy.card('s', 11), cy.card('s', 12), cy.card('s', 13), cy.card('c', 11), cy.card('c', 12), cy.card('c', 13))))
+    print(f"CURR SUITE -> {enemy.current_card.suite}, CURR RANK -> {enemy.current_card.rank}")
+    print("ENEMY DECK:")
+    enemy.deck.printdeck()
+
+
+    # card_visuals = g.gameobject(29, 42, ("C:\\Users\\RobbN\Documents\\Programs\\_Python\\Regicide\\graphics\\c1.png",), PIXEL_SCALE)
+
     image = []
-    shadowimage = pygame.transform.scale(pygame.image.load("C:\\Users\\RobbN\Documents\\Programs\\_Python\\Regicide\\graphics\\shadow.png"), (CARD_SHADOW_PIXEL_WIDTH, CARD_SHADOW_PIXEL_HEIGHT))
-    for i in range(1, 11):
-        current_name = ("c%d.png" % i)
-        image.append(pygame.image.load("C:\\Users\\RobbN\Documents\\Programs\\_Python\\Regicide\\graphics\\" + current_name)) #FIX
-        image[i - 1] = pygame.transform.scale(image[i - 1], (CARD_PIXEL_WIDTH, CARD_PIXEL_HEIGHT))
+    # shadowimage = pygame.transform.scale(pygame.image.load("C:\\Users\\RobbN\Documents\\Programs\\_Python\\Regicide\\graphics\\shadow.png"), (g.CARD_SHADOW_PIXEL_WIDTH, g.CARD_SHADOW_PIXEL_HEIGHT))
 
-    count = 0
-    
     while 1:
-        count += 1
-        if (count // 60) > 9:
-            count = 0
-        card_set = count // 60
-        window.fill(DARK_GREEN)
-        window.blit(image[card_set], ((WIDTH / 2), (HEIGHT / 2)))
-        window.blit(shadowimage, (600, 200))
-        draw_text('Regicide: main menu', font, WHITE, window, 600, 350)
-
+        g.window.fill(g.DARK_GREEN)
+        g.draw_text('Regicide: main menu', g.psfont, g.WHITE, g.window, 600, 350)
+        # g.window.blit(card_visuals.sprites[0], (card_visuals.x, card_visuals.y))
 
         for event in pygame.event.get():
-            if event.type == QUIT:
+            if event.type == g.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
+            if event.type == g.KEYDOWN:
+                if event.key == g.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
 
         pygame.display.update()
-        mainClock.tick(FPS)
+        g.mainClock.tick(g.FPS)
 
 if __name__ == "__main__":
     main()

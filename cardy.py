@@ -3,25 +3,25 @@ import random
 
 # CARD CLASS
 class card:
-    # suites -> 1 = heart   2 = diamond
-    #           3 = spade   4 = clover
-    def __init__(self, suite: int, value):
+    # suites -> h = heart   d = diamond
+    #           s = spade   c = clover
+    def __init__(self, suite: str, rank: int):
         # Check validity of arguments
-        assert ((isinstance(suite, int)) and (suite > 0 and suite < 5)), "suite is invalid"
-        assert (isinstance(value, int) and (value > 0 and value < 14)), "value is invalid"
+        assert ((isinstance(suite, str)) and (suite == 'h' or suite == 'd' or suite == 's' or suite == 'c')), "suite is invalid"
+        assert (isinstance(rank, int) and (rank > 0 and rank < 14)), "rank is invalid"
 
         # Pass arguments to object attributes
         self.suite = suite
-        self.value = value
+        self.rank = rank
 
-    def getvalue(self):
-        return self.value
+    def getrank(self):
+        return self.rank
 
     def getsuite(self):
         return self.suite
 
     def __add__(card1, card2):
-        return (card1.value + card2.value)
+        return (card1.rank + card2.rank)
 
 # DECK CLASS
 class deck:
@@ -69,4 +69,4 @@ class deck:
 
     def printdeck(self):
         for i in range(len(self.set)):
-            print(f"{i}.) suite -> {self.set[i].suite}\tvalue -> {self.set[i].value}")
+            print(f"{i}.) suite -> {self.set[i].suite}\trank -> {self.set[i].rank}")
